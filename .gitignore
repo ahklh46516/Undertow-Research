@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Playwright / dev tooling
+.playwright-mcp/
+
+# Dev artifacts: logo previews and raw source art
+logo-preview.html
+Undertow.png
+BBB*.png
+pearl_bottomleft.png
+
+# Screenshots — ignore all PNGs by default, then allow the real assets
+*.png
+!logo.png
+!favicon-16.png
+!favicon-32.png
+!favicon-512.png
+!apple-touch-icon.png

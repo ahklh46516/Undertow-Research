@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 502 420" font-family="Inter,Helvetica,Arial,sans-serif">
+<text x="106" y="66" transform="rotate(-50 106 66)" font-size="11" fill="#b9b6ad">BTC</text>
+<text x="146" y="66" transform="rotate(-50 146 66)" font-size="11" fill="#b9b6ad">ETH</text>
+<text x="186" y="66" transform="rotate(-50 186 66)" font-size="11" fill="#b9b6ad">SPX</text>
+<text x="226" y="66" transform="rotate(-50 226 66)" font-size="11" fill="#b9b6ad">Nasdaq</text>
+<text x="266" y="66" transform="rotate(-50 266 66)" font-size="11" fill="#b9b6ad">KOSPI</text>
+<text x="306" y="66" transform="rotate(-50 306 66)" font-size="11" fill="#b9b6ad">Gold</text>
+<text x="346" y="66" transform="rotate(-50 346 66)" font-size="11" fill="#b9b6ad">Oil</text>
+<text x="386" y="66" transform="rotate(-50 386 66)" font-size="11" fill="#b9b6ad">DXY</text>
+<text x="76" y="100" text-anchor="end" font-size="11" fill="#b9b6ad">BTC</text>
+<rect x="86" y="76" width="38" height="38" rx="2" fill="#f4d496"/>
+<text x="105" y="99" text-anchor="middle" font-size="9.5" fill="#15161c">1.0</text>
+<rect x="126" y="76" width="38" height="38" rx="2" fill="#ebbf7d"/>
+<text x="145" y="99" text-anchor="middle" font-size="9.5" fill="#15161c">0.94</text>
+<rect x="166" y="76" width="38" height="38" rx="2" fill="#86653f"/>
+<text x="185" y="99" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.50</text>
+<rect x="206" y="76" width="38" height="38" rx="2" fill="#8a6740"/>
+<text x="225" y="99" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.52</text>
+<rect x="246" y="76" width="38" height="38" rx="2" fill="#1b1a1c"/>
+<text x="265" y="99" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.01</text>
+<rect x="286" y="76" width="38" height="38" rx="2" fill="#2f2722"/>
+<text x="305" y="99" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.08</text>
+<rect x="326" y="76" width="38" height="38" rx="2" fill="#1f3737"/>
+<text x="345" y="99" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.11</text>
+<rect x="366" y="76" width="38" height="38" rx="2" fill="#213d3e"/>
+<text x="385" y="99" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.13</text>
+<text x="76" y="140" text-anchor="end" font-size="11" fill="#b9b6ad">ETH</text>
+<rect x="86" y="116" width="38" height="38" rx="2" fill="#ebbf7d"/>
+<text x="105" y="139" text-anchor="middle" font-size="9.5" fill="#15161c">0.94</text>
+<rect x="126" y="116" width="38" height="38" rx="2" fill="#f4d496"/>
+<text x="145" y="139" text-anchor="middle" font-size="9.5" fill="#15161c">1.0</text>
+<rect x="166" y="116" width="38" height="38" rx="2" fill="#86653f"/>
+<text x="185" y="139" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.50</text>
+<rect x="206" y="116" width="38" height="38" rx="2" fill="#8c6940"/>
+<text x="225" y="139" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.53</text>
+<rect x="246" y="116" width="38" height="38" rx="2" fill="#2e2722"/>
+<text x="265" y="139" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.08</text>
+<rect x="286" y="116" width="38" height="38" rx="2" fill="#3d3127"/>
+<text x="305" y="139" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.14</text>
+<rect x="326" y="116" width="38" height="38" rx="2" fill="#1d2e30"/>
+<text x="345" y="139" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.08</text>
+<rect x="366" y="116" width="38" height="38" rx="2" fill="#285654"/>
+<text x="385" y="139" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.23</text>
+<text x="76" y="180" text-anchor="end" font-size="11" fill="#b9b6ad">SPX</text>
+<rect x="86" y="156" width="38" height="38" rx="2" fill="#86653f"/>
+<text x="105" y="179" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.50</text>
+<rect x="126" y="156" width="38" height="38" rx="2" fill="#86653f"/>
+<text x="145" y="179" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.50</text>
+<rect x="166" y="156" width="38" height="38" rx="2" fill="#f4d496"/>
+<text x="185" y="179" text-anchor="middle" font-size="9.5" fill="#15161c">1.0</text>
+<rect x="206" y="156" width="38" height="38" rx="2" fill="#f0cb8b"/>
+<text x="225" y="179" text-anchor="middle" font-size="9.5" fill="#15161c">0.97</text>
+<rect x="246" y="156" width="38" height="38" rx="2" fill="#312923"/>
+<text x="265" y="179" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.10</text>
+<rect x="286" y="156" width="38" height="38" rx="2" fill="#5b4630"/>
+<text x="305" y="179" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.28</text>
+<rect x="326" y="156" width="38" height="38" rx="2" fill="#388d85"/>
+<text x="345" y="179" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.46</text>
+<rect x="366" y="156" width="38" height="38" rx="2" fill="#35837d"/>
+<text x="385" y="179" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.42</text>
+<text x="76" y="220" text-anchor="end" font-size="11" fill="#b9b6ad">Nasdaq</text>
+<rect x="86" y="196" width="38" height="38" rx="2" fill="#8a6740"/>
+<text x="105" y="219" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.52</text>
+<rect x="126" y="196" width="38" height="38" rx="2" fill="#8c6940"/>
+<text x="145" y="219" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.53</text>
+<rect x="166" y="196" width="38" height="38" rx="2" fill="#f0cb8b"/>
+<text x="185" y="219" text-anchor="middle" font-size="9.5" fill="#15161c">0.97</text>
+<rect x="206" y="196" width="38" height="38" rx="2" fill="#f4d496"/>
+<text x="225" y="219" text-anchor="middle" font-size="9.5" fill="#15161c">1.0</text>
+<rect x="246" y="196" width="38" height="38" rx="2" fill="#382e25"/>
+<text x="265" y="219" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.12</text>
+<rect x="286" y="196" width="38" height="38" rx="2" fill="#5b4631"/>
+<text x="305" y="219" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.28</text>
+<rect x="326" y="196" width="38" height="38" rx="2" fill="#35847d"/>
+<text x="345" y="219" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.42</text>
+<rect x="366" y="196" width="38" height="38" rx="2" fill="#34817b"/>
+<text x="385" y="219" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.41</text>
+<text x="76" y="260" text-anchor="end" font-size="11" fill="#b9b6ad">KOSPI</text>
+<rect x="86" y="236" width="38" height="38" rx="2" fill="#1b1a1c"/>
+<text x="105" y="259" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.01</text>
+<rect x="126" y="236" width="38" height="38" rx="2" fill="#2e2722"/>
+<text x="145" y="259" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.08</text>
+<rect x="166" y="236" width="38" height="38" rx="2" fill="#312923"/>
+<text x="185" y="259" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.10</text>
+<rect x="206" y="236" width="38" height="38" rx="2" fill="#382e25"/>
+<text x="225" y="259" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.12</text>
+<rect x="246" y="236" width="38" height="38" rx="2" fill="#f4d496"/>
+<text x="265" y="259" text-anchor="middle" font-size="9.5" fill="#15161c">1.0</text>
+<rect x="286" y="236" width="38" height="38" rx="2" fill="#5c4731"/>
+<text x="305" y="259" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.29</text>
+<rect x="326" y="236" width="38" height="38" rx="2" fill="#234242"/>
+<text x="345" y="259" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.15</text>
+<rect x="366" y="236" width="38" height="38" rx="2" fill="#1f3738"/>
+<text x="385" y="259" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.11</text>
+<text x="76" y="300" text-anchor="end" font-size="11" fill="#b9b6ad">Gold</text>
+<rect x="86" y="276" width="38" height="38" rx="2" fill="#2f2722"/>
+<text x="105" y="299" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.08</text>
+<rect x="126" y="276" width="38" height="38" rx="2" fill="#3d3127"/>
+<text x="145" y="299" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.14</text>
+<rect x="166" y="276" width="38" height="38" rx="2" fill="#5b4630"/>
+<text x="185" y="299" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.28</text>
+<rect x="206" y="276" width="38" height="38" rx="2" fill="#5b4631"/>
+<text x="225" y="299" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.28</text>
+<rect x="246" y="276" width="38" height="38" rx="2" fill="#5c4731"/>
+<text x="265" y="299" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.29</text>
+<rect x="286" y="276" width="38" height="38" rx="2" fill="#f4d496"/>
+<text x="305" y="299" text-anchor="middle" font-size="9.5" fill="#15161c">1.0</text>
+<rect x="326" y="276" width="38" height="38" rx="2" fill="#244747"/>
+<text x="345" y="299" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.17</text>
+<rect x="366" y="276" width="38" height="38" rx="2" fill="#34807a"/>
+<text x="385" y="299" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.41</text>
+<text x="76" y="340" text-anchor="end" font-size="11" fill="#b9b6ad">Oil</text>
+<rect x="86" y="316" width="38" height="38" rx="2" fill="#1f3737"/>
+<text x="105" y="339" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.11</text>
+<rect x="126" y="316" width="38" height="38" rx="2" fill="#1d2e30"/>
+<text x="145" y="339" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.08</text>
+<rect x="166" y="316" width="38" height="38" rx="2" fill="#388d85"/>
+<text x="185" y="339" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.46</text>
+<rect x="206" y="316" width="38" height="38" rx="2" fill="#35847d"/>
+<text x="225" y="339" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.42</text>
+<rect x="246" y="316" width="38" height="38" rx="2" fill="#234242"/>
+<text x="265" y="339" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.15</text>
+<rect x="286" y="316" width="38" height="38" rx="2" fill="#244747"/>
+<text x="305" y="339" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.17</text>
+<rect x="326" y="316" width="38" height="38" rx="2" fill="#f4d496"/>
+<text x="345" y="339" text-anchor="middle" font-size="9.5" fill="#15161c">1.0</text>
+<rect x="366" y="316" width="38" height="38" rx="2" fill="#735738"/>
+<text x="385" y="339" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.40</text>
+<text x="76" y="380" text-anchor="end" font-size="11" fill="#b9b6ad">DXY</text>
+<rect x="86" y="356" width="38" height="38" rx="2" fill="#213d3e"/>
+<text x="105" y="379" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.13</text>
+<rect x="126" y="356" width="38" height="38" rx="2" fill="#285654"/>
+<text x="145" y="379" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.23</text>
+<rect x="166" y="356" width="38" height="38" rx="2" fill="#35837d"/>
+<text x="185" y="379" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.42</text>
+<rect x="206" y="356" width="38" height="38" rx="2" fill="#34817b"/>
+<text x="225" y="379" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.41</text>
+<rect x="246" y="356" width="38" height="38" rx="2" fill="#1f3738"/>
+<text x="265" y="379" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.11</text>
+<rect x="286" y="356" width="38" height="38" rx="2" fill="#34807a"/>
+<text x="305" y="379" text-anchor="middle" font-size="9.5" fill="#cfcbc2">-0.41</text>
+<rect x="326" y="356" width="38" height="38" rx="2" fill="#735738"/>
+<text x="345" y="379" text-anchor="middle" font-size="9.5" fill="#cfcbc2">0.40</text>
+<rect x="366" y="356" width="38" height="38" rx="2" fill="#f4d496"/>
+<text x="385" y="379" text-anchor="middle" font-size="9.5" fill="#15161c">1.0</text>
+<defs><linearGradient id="cb" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#f4d496"/>
+<stop offset="0.5" stop-color="#16161a"/>
+<stop offset="1" stop-color="#40aaa0"/>
+</linearGradient></defs>
+<rect x="440" y="76" width="14" height="320" rx="3" fill="url(#cb)" stroke="#2a2c33" stroke-width="0.6"/>
+<text x="460" y="80" font-size="10.5" fill="#8b8780">+1</text>
+<text x="460" y="240" font-size="10.5" fill="#8b8780">0</text>
+<text x="460" y="400" font-size="10.5" fill="#8b8780">−1</text>
+</svg>
