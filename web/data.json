@@ -51,23 +51,23 @@
  "betas": [
   [
    "ETH",
-   7.7
+   7.0
   ],
   [
    "BTC",
-   4.7
+   4.3
   ],
   [
    "KOSPI",
-   1.7
+   1.6
   ],
   [
    "Nasdaq",
-   1.3
+   1.4
   ],
   [
    "Gold",
-   1.3
+   1.1
   ],
   [
    "SPX",
@@ -75,11 +75,11 @@
   ],
   [
    "Oil",
-   -0.0
+   -0.1
   ],
   [
    "DXY",
-   -0.7
+   -0.5
   ]
  ],
  "assets": [
@@ -191,6 +191,26 @@
    0.9
   ]
  ],
+ "regime_stats": {
+  "Risk-On": {
+   "rho": 0.1,
+   "vol": 20,
+   "share": 40,
+   "dur": 14.2
+  },
+  "Neutral": {
+   "rho": 0.14,
+   "vol": 27,
+   "share": 20,
+   "dur": 3.0
+  },
+  "Risk-Off": {
+   "rho": 0.14,
+   "vol": 35,
+   "share": 40,
+   "dur": 8.8
+  }
+ },
  "history": [
   "o",
   "o",
@@ -984,26 +1004,6 @@
    "Neutral",
    "Risk-Off"
   ]
- },
- "regime_stats": {
-  "Risk-On": {
-   "rho": 0.1,
-   "vol": 20,
-   "share": 40,
-   "dur": 14.2
-  },
-  "Neutral": {
-   "rho": 0.14,
-   "vol": 27,
-   "share": 20,
-   "dur": 3.0
-  },
-  "Risk-Off": {
-   "rho": 0.14,
-   "vol": 35,
-   "share": 40,
-   "dur": 8.8
-  }
  },
  "prices": {
   "BTC": 60922.67,
