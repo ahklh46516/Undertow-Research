@@ -4,8 +4,6 @@
   <h1>Undertow Research</h1>
   <p><strong>The macro layer for on-chain markets.</strong></p>
 
-  CA: https://pump.fun/coin/4GDoHeu8N89w3s5HQKGWQF1iDCexcGqQvwxAWmMDpump
-
   <p>
     <a href="https://undertowmacro.xyz"><img alt="Website" src="https://img.shields.io/badge/website-undertowmacro.xyz-e0a45c?style=flat-square&logo=googlechrome&logoColor=white"></a>
     <a href="https://x.com/undertowmacro"><img alt="X / Twitter" src="https://img.shields.io/badge/follow-%40undertowmacro-1d9bf0?style=flat-square&logo=x&logoColor=white"></a>
