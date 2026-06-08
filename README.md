@@ -16,6 +16,7 @@
     <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-34c75e?style=flat-square"></a>
     <img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-4db6ac?style=flat-square&logo=python&logoColor=white">
     <img alt="Model" src="https://img.shields.io/badge/model-HMM%20%2B%20GARCH-e8517f?style=flat-square">
+    <a href="https://github.com/nickbauman77/Undertow-Research/pkgs/container/undertow-research"><img alt="Container" src="https://img.shields.io/badge/ghcr.io-image-2496ed?style=flat-square&logo=docker&logoColor=white"></a>
     <img alt="Data" src="https://img.shields.io/badge/data-live-34c75e?style=flat-square">
   </p>
 </div>
@@ -207,6 +208,17 @@ Open:
 - <http://localhost:8777/terminal.html> — the dashboard
 
 Keep data fresh locally with `python -m engine.live_update` (re-runs every ~2 min).
+
+### …or with Docker
+
+```bash
+docker run --rm -p 8000:8000 ghcr.io/nickbauman77/undertow-research:latest
+# then open http://localhost:8000/ (whitepaper) or /terminal.html (dashboard)
+```
+
+The container recomputes a fresh snapshot on start (falling back to the bundled
+`data.json` if offline) and serves the site. Image published to the GitHub Container
+Registry — see **Packages**.
 
 ## Data contract
 
