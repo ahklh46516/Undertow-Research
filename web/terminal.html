@@ -232,7 +232,7 @@ function render(d){
   // top
   el('asof').textContent='epoch '+d.as_of+' UTC · '+d.window_days+'d window · daily';
   el('foot').innerHTML='Computed from live market data (Yahoo Finance) as of <strong>'+d.as_of+'</strong>. '+
-    'Regime &amp; index are a first-cut model; the on-chain oracle is not yet deployed. Not financial advice.';
+    'Regime is a 3-state hidden-Markov + GARCH model; the on-chain oracle is not yet deployed. Not financial advice.';
 
   // ---- gauge ----
   var arcLen=Math.PI*115, v=d.index;

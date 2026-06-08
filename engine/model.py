@@ -2,27 +2,28 @@
 
 Given an aligned panel of prices, computes everything the dashboard needs:
 
-- the conditional (trailing-window) correlation matrix,
-- the rolling mean pairwise correlation,
-- the composite Macro Undertow Index (0-100),
-- the risk regime and its probabilities,
-- per-asset beta to the index,
-- the regime transition matrix and per-regime statistics,
-- the liquidity drivers, the index time series, the recent feed and history.
+- the conditional (trailing-window) correlation matrix and rolling mean correlation,
+- GARCH(1,1) conditional volatility of the risk basket,
+- a 3-state Gaussian **hidden Markov regime** (Baum-Welch fit, Viterbi decode) with
+  posterior state probabilities and an estimated transition matrix,
+- a composite Macro Undertow Index (0-100) as a continuous liquidity gauge,
+- per-asset beta to the index, and per-regime statistics.
 
-Nothing here forecasts prices. The regime/index are a transparent, first-cut model
-over real market data.
+Nothing here forecasts prices. If the HMM fails to fit (degenerate data), the regime
+falls back to a transparent threshold on the index so the pipeline never breaks.
 """
 
 import numpy as np
 import pandas as pd
 
 from .sources import ASSET_NAMES, RISK
+from .hmm import GaussianHMM
+from .garch import fit_vol
 
 LABELS = ["Risk-On", "Neutral", "Risk-Off"]
-CORR_WINDOW = 90      # trailing days for the current correlation matrix
-RHO_WINDOW = 60       # trailing days for rolling mean correlation
-MOM_WINDOW = 20       # momentum / vol / dollar lookback
+CORR_WINDOW = 90
+RHO_WINDOW = 60
+MOM_WINDOW = 20
 
 
 def _regime_of(v):
@@ -30,7 +31,6 @@ def _regime_of(v):
 
 
 def _probs_of(v):
-    """Soft state probabilities from the index value (heuristic, sums to 1)."""
     centers = {"Risk-On": 78, "Neutral": 50, "Risk-Off": 22}
     logits = {k: -abs(v - c) / 18.0 for k, c in centers.items()}
     m = max(logits.values())
@@ -44,7 +44,6 @@ def _pct(series, n):
 
 
 def _rolling_mean_corr(returns):
-    """Mean of the upper-triangle of the trailing-window correlation, per day."""
     vals = returns[ASSET_NAMES].values
     dates = list(returns.index)
     win = min(RHO_WINDOW, len(returns))
@@ -57,36 +56,97 @@ def _rolling_mean_corr(returns):
     return pd.Series(out, index=idx)
 
 
+def _fit_regime(features):
+    """Fit the HMM and return (regime_series, probs_dict, transition, on_prob_series).
+
+    ``features`` columns must be ordered [momentum, rho, vol, dxy] (momentum is the
+    risk-on signal). Falls back to ``None`` if the fit is degenerate.
+    """
+    z = (features - features.mean()) / features.std()
+    X = z[["mom", "rho", "vol", "dxy"]].values
+    if len(X) < 40 or not np.isfinite(X).all():
+        return None
+
+    hmm = GaussianHMM(n_states=3).fit(X)
+    states = hmm.decode(X)
+    post = hmm.predict_proba(X)
+
+    # label states by a risk score on their (standardized) means
+    sm = hmm.means  # columns [mom, rho, vol, dxy]
+    risk_score = sm[:, 0] - sm[:, 1] - sm[:, 2] - sm[:, 3]
+    order = list(np.argsort(-risk_score))           # highest score -> Risk-On
+    state_to_label = {state: LABELS[rank] for rank, state in enumerate(order)}
+    label_to_state = {v: k for k, v in state_to_label.items()}
+
+    reg_series = pd.Series([state_to_label[s] for s in states], index=features.index)
+    cur = post[-1]
+    probs = {lab: float(cur[label_to_state[lab]]) for lab in LABELS}
+    A = hmm.transmat
+    transition = [[round(float(A[label_to_state[LABELS[i]], label_to_state[LABELS[j]]]), 2)
+                   for j in range(3)] for i in range(3)]
+    on_prob = pd.Series(post[:, label_to_state["Risk-On"]], index=features.index)
+    return reg_series, probs, transition, on_prob
+
+
 def compute(price_df, tnx=None):
     """Run the model. Returns ``(data_dict, asset_names, corr_matrix)``."""
     px = price_df
     ret = np.log(px / px.shift(1)).dropna()
     as_of = px.index[-1]
 
-    # ---- conditional correlation (trailing window) ----
+    # ---- conditional correlation ----
     window = min(CORR_WINDOW, len(ret))
     rt = ret.tail(window).corr().reindex(index=ASSET_NAMES, columns=ASSET_NAMES)
     corr = rt.values
     rho_series = _rolling_mean_corr(ret)
     rho_bar = float(rho_series.iloc[-1])
 
-    # ---- composite Macro Undertow Index ----
+    # ---- risk basket, GARCH volatility ----
     risk_ret = ret[RISK].mean(axis=1)
+    gvol = pd.Series(fit_vol(risk_ret.values), index=risk_ret.index)
+
     mom = risk_ret.rolling(MOM_WINDOW).sum()
     vol = risk_ret.rolling(MOM_WINDOW).std()
-    dxy_chg = np.log(px["DXY"] / px["DXY"].shift(MOM_WINDOW))   # dollar up = risk-off
+    dxy_chg = np.log(px["DXY"] / px["DXY"].shift(MOM_WINDOW))
     rho_aligned = rho_series.reindex(ret.index)
-    feat = pd.DataFrame({"mom": mom, "vol": vol, "dxy": dxy_chg, "rho": rho_aligned}).dropna()
-    z = (feat - feat.mean()) / feat.std()
+
+    # ---- composite Macro Undertow Index (continuous gauge) ----
+    feat_idx = pd.DataFrame({"mom": mom, "vol": vol, "dxy": dxy_chg, "rho": rho_aligned}).dropna()
+    z = (feat_idx - feat_idx.mean()) / feat_idx.std()
     score = z["mom"] - z["dxy"] - z["rho"] - z["vol"]
     index = (score.rank(pct=True) * 100.0).dropna()
-    reg_series = index.apply(_regime_of)
-
     cur_index = float(index.iloc[-1])
-    cur_regime = _regime_of(cur_index)
-    cur_probs = _probs_of(cur_index)
 
-    # ---- per-asset beta to dIndex (normalized to SPX = 1) ----
+    # ---- hidden Markov regime (Baum-Welch + Viterbi) ----
+    feat_hmm = pd.DataFrame({"mom": mom, "rho": rho_aligned,
+                             "vol": gvol.reindex(ret.index), "dxy": dxy_chg}).dropna()
+    fitted = None
+    try:
+        fitted = _fit_regime(feat_hmm)
+    except Exception:  # noqa: BLE001 - never let a bad fit break the pipeline
+        fitted = None
+
+    if fitted is not None:
+        reg_series, cur_probs, transition, on_prob = fitted
+        cur_regime = reg_series.iloc[-1]
+        model_kind = "hmm"
+    else:
+        reg_series = index.apply(_regime_of)
+        cur_regime = _regime_of(cur_index)
+        cur_probs = _probs_of(cur_index)
+        on_prob = (index / 100.0).clip(0, 1)
+        idx_of = {l: i for i, l in enumerate(LABELS)}
+        t = np.zeros((3, 3))
+        seq0 = reg_series.values
+        for i in range(len(seq0) - 1):
+            t[idx_of[seq0[i]], idx_of[seq0[i + 1]]] += 1
+        t = np.divide(t, t.sum(1, keepdims=True), out=np.zeros_like(t), where=t.sum(1, keepdims=True) != 0)
+        transition = [[round(float(x), 2) for x in row] for row in t]
+        model_kind = "threshold"
+
+    reg_aligned = reg_series.reindex(index.index).ffill().bfill()
+
+    # ---- per-asset beta to dIndex ----
     d_index = (index / 100.0).diff()
     aligned_ret = ret.reindex(index.index)
     raw = {}
@@ -97,16 +157,8 @@ def compute(price_df, tnx=None):
     spx_b = raw.get("SPX", 1.0) or 1.0
     betas = sorted([[a, round(b / abs(spx_b), 1)] for a, b in raw.items()], key=lambda r: -r[1])
 
-    # ---- transition matrix ----
-    idx_of = {l: i for i, l in enumerate(LABELS)}
-    t = np.zeros((3, 3))
-    seq = reg_series.values
-    for i in range(len(seq) - 1):
-        t[idx_of[seq[i]], idx_of[seq[i + 1]]] += 1
-    t = np.divide(t, t.sum(1, keepdims=True), out=np.zeros_like(t), where=t.sum(1, keepdims=True) != 0)
-    transition = [[round(float(x), 2) for x in row] for row in t]
-
     # ---- per-regime statistics ----
+    seq = reg_aligned.values
     runs, prev, cnt = [], None, 0
     for r in seq:
         if r == prev:
@@ -119,19 +171,19 @@ def compute(price_df, tnx=None):
         runs.append((prev, cnt))
     regime_stats = {}
     for lab in LABELS:
-        days = reg_series[reg_series == lab].index
+        days = reg_aligned[reg_aligned == lab].index
         durs = [c for l, c in runs if l == lab]
         regime_stats[lab] = {
             "rho": round(float(rho_aligned.reindex(days).mean()) if len(days) else 0.0, 2),
-            "vol": round(float(risk_ret.reindex(days).std() * np.sqrt(252) * 100) if len(days) > 1 else 0.0),
-            "share": round(len(days) / len(reg_series) * 100),
+            "vol": round(float(gvol.reindex(days).mean() * np.sqrt(252) * 100) if len(days) else 0.0),
+            "share": round(len(days) / len(reg_aligned) * 100),
             "dur": round(float(np.mean(durs)), 1) if durs else 0,
         }
 
-    # ---- liquidity drivers (real) ----
+    # ---- liquidity drivers ----
     dxy_now, dxy_20 = float(px["DXY"].iloc[-1]), _pct(px["DXY"], 20)
     btc_30 = _pct(px["BTC"], 30)
-    rb_vol = float(vol.iloc[-1] * np.sqrt(252) * 100)
+    rb_vol = float(gvol.iloc[-1] * np.sqrt(252) * 100)
     drivers = [
         {"k": "Dollar index (DXY)", "v": "%.1f" % dxy_now, "tone": "bad" if dxy_20 > 0 else "good",
          "note": ("tightening" if dxy_20 > 0 else "easing") + " (%+.1f%% 20d)" % dxy_20},
@@ -139,7 +191,7 @@ def compute(price_df, tnx=None):
          "tone": "good" if mom.iloc[-1] > 0 else "bad", "note": "BTC, ETH, SPX, NDX, KOSPI"},
         {"k": "BTC 30d momentum", "v": "%+.1f%%" % btc_30, "tone": "good" if btc_30 > 0 else "bad",
          "note": "trailing 30 sessions"},
-        {"k": "Realized vol (ann.)", "v": "%.0f%%" % rb_vol, "tone": "neu", "note": "risk basket"},
+        {"k": "GARCH volatility (ann.)", "v": "%.0f%%" % rb_vol, "tone": "neu", "note": "risk basket"},
         {"k": "Mean pairwise correlation", "v": "%.2f" % rho_bar,
          "tone": "bad" if rho_bar > 0.4 else "good", "note": "elevated" if rho_bar > 0.4 else "calm / dispersed"},
     ]
@@ -156,24 +208,25 @@ def compute(price_df, tnx=None):
         "dates": list(index.index),
         "index": [round(float(v), 1) for v in index.values],
         "rho": [round(float(v), 1) for v in rho_for_chart.values],
-        "regime": [_regime_of(v) for v in index.values],
+        "regime": [reg_aligned.loc[d] for d in index.index],
     }
 
     # ---- recent feed (last 6) ----
+    on_aligned = on_prob.reindex(index.index).ffill().bfill()
     feed = []
     for d in list(index.index)[-6:][::-1]:
-        v = float(index.loc[d])
-        feed.append({"date": d, "regime": _regime_of(v), "index": round(v),
-                     "pon": round(_probs_of(v)["Risk-On"], 2)})
+        feed.append({"date": d, "regime": reg_aligned.loc[d],
+                     "index": round(float(index.loc[d])), "pon": round(float(on_aligned.loc[d]), 2)})
 
     # ---- 36-week regime history ----
-    weekly = reg_series.iloc[::-5][::-1].tail(36)
+    weekly = reg_aligned.iloc[::-5][::-1].tail(36)
     hmap = {"Risk-On": "o", "Neutral": "n", "Risk-Off": "g"}
     history = [hmap[r] for r in weekly.values]
 
     data = {
         "as_of": as_of,
         "window_days": int(window),
+        "model": model_kind,
         "index": round(cur_index),
         "index_exact": round(cur_index, 1),
         "regime": cur_regime,

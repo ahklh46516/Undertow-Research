@@ -7,6 +7,7 @@
     <img alt="status" src="https://img.shields.io/badge/status-research_preview-e0a45c" />
     <img alt="license" src="https://img.shields.io/badge/license-MIT-34c75e" />
     <img alt="python" src="https://img.shields.io/badge/python-3.10%2B-4db6ac" />
+    <img alt="model" src="https://img.shields.io/badge/model-HMM%20%2B%20GARCH-e8517f" />
     <img alt="data" src="https://img.shields.io/badge/data-live-34c75e" />
   </p>
 </div>
@@ -31,9 +32,12 @@ consume.
 ├── engine/                 # Python data pipeline
 │   ├── sources.py          #   fetch & align the cross-asset panel (Yahoo Finance)
 │   ├── model.py            #   correlation, index, regime, betas, transitions
+│   ├── hmm.py              #   Gaussian HMM (Baum-Welch + Viterbi)
+│   ├── garch.py            #   GARCH(1,1) conditional volatility
 │   ├── heatmap.py          #   render the correlation matrix to SVG
 │   ├── pipeline.py         #   orchestrate: fetch -> model -> write
 │   └── live_update.py      #   re-run on an interval
+├── tests/                  # pytest suite (hmm, garch, model)
 ├── web/                    # static, dependency-free frontend
 │   ├── index.html          #   the whitepaper
 │   ├── terminal.html       #   the live dashboard (Terminal / Regime / Oracle)
@@ -65,13 +69,19 @@ Keep data fresh locally with `python -m engine.live_update` (re-runs every ~2 mi
 the dashboard polls `data.json` every 45s, so it updates without a manual refresh. In
 CI, `.github/workflows/refresh-data.yml` refreshes the snapshot on a schedule.
 
-## The model (first-cut)
+## The model
 
 The engine pulls ~1 year of daily closes for BTC, ETH, S&P 500, Nasdaq, KOSPI, gold,
-WTI crude, the dollar index and the 10y Treasury yield, then computes a conditional
-correlation matrix, a composite **Macro Undertow Index** (0–100), the **risk regime**
-and its probabilities, per-asset **betas**, a transition matrix and regime statistics.
-Full details in [`docs/methodology.md`](docs/methodology.md); the data flow is in
+WTI crude, the dollar index and the 10y Treasury yield, then computes:
+
+- a conditional **correlation** matrix and **GARCH(1,1)** risk-basket volatility,
+- a composite **Macro Undertow Index** (0–100) — a continuous liquidity gauge,
+- the **risk regime** from a 3-state Gaussian **hidden Markov model** (Baum-Welch fit,
+  Viterbi decode) with posterior state probabilities and an estimated transition matrix,
+- per-asset **betas** and per-regime statistics.
+
+The HMM and GARCH estimators are implemented from scratch in NumPy/SciPy. Full details in
+[`docs/methodology.md`](docs/methodology.md); the data flow is in
 [`docs/architecture.md`](docs/architecture.md).
 
 Data source: public market data (Yahoo Finance chart API). No API key required.

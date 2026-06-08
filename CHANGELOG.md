@@ -3,6 +3,20 @@
 All notable changes to this project are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Changed
+- **Real model.** Replaced the threshold/heuristic regime with a hand-rolled
+  3-state Gaussian **hidden Markov model** (Baum-Welch fit, Viterbi decode, log-space
+  forward-backward) and added a maximum-likelihood **GARCH(1,1)** volatility estimator.
+  Regime, posterior probabilities and the transition matrix are now model outputs.
+  Falls back to the threshold method if the HMM fails to fit.
+
+### Added
+- `engine/hmm.py`, `engine/garch.py`.
+- `tests/` — pytest suite for the HMM, GARCH and the full model contract, plus a CI
+  test workflow (`.github/workflows/tests.yml`).
+
 ## [0.1.0] — 2026-06
 
 ### Added

@@ -1,9 +1,10 @@
 # Methodology
 
 This document describes how the Undertow engine turns raw market data into the
-**Macro Undertow Index** and the **risk regime**. It is intentionally explicit about
-being a *first-cut* model — a transparent baseline, not the full DCC-GARCH + hidden
-Markov estimator described in the whitepaper.
+**Macro Undertow Index** (a continuous liquidity gauge) and the **risk regime** (a
+discrete hidden-Markov state). The regime is estimated with a real Baum-Welch / Viterbi
+HMM and the volatility with a maximum-likelihood GARCH(1,1) — both implemented from
+scratch in NumPy/SciPy (no `hmmlearn` / `arch` dependency).
 
 ## 1. Panel
 
@@ -22,12 +23,22 @@ aligned to the common set of trading days, then converted to log returns.
 
 The **risk basket** is the equal-weight mean of BTC, ETH, SPX, Nasdaq and KOSPI.
 
-## 2. Conditional correlation
+## 2. Conditional correlation & volatility
 
 The current correlation matrix `R_t` is the sample correlation over the trailing
 `CORR_WINDOW` (default 90) days. The **mean pairwise correlation** `ρ̄(t)` is the mean
 of the upper triangle of the trailing-`RHO_WINDOW` (default 60) day correlation,
 computed per day — it rises toward one when the market sells off as a bloc.
+
+The risk-basket **conditional volatility** is estimated with a **GARCH(1,1)** model
+(`engine/garch.py`), fit by maximum likelihood under Gaussian innovations:
+
+```
+h_t = ω + α·r_{t-1}² + β·h_{t-1}
+```
+
+with `ω > 0`, `α, β ≥ 0`, `α + β < 1`. This replaces a plain rolling standard deviation
+and feeds both the regime model and the volatility driver.
 
 ## 3. Macro Undertow Index
 
@@ -50,19 +61,33 @@ and the index is its percentile rank over the sample, scaled to `[0, 100]`:
 Index(t) = 100 · percentile_rank( score(t) )
 ```
 
-## 4. Regime and probabilities
+## 4. Regime: a hidden Markov model
 
-The regime is a threshold on the index:
+The regime is the hidden state of a **3-state Gaussian HMM** (`engine/hmm.py`) fit on a
+daily feature panel:
 
-| Index    | Regime    |
-|----------|-----------|
-| ≥ 60     | Risk-On   |
-| 40 – 60  | Neutral   |
-| < 40     | Risk-Off  |
+```
+features = [ risk-basket momentum (20d) , mean pairwise correlation ,
+             GARCH volatility , dollar 20d change ]   (standardized)
+```
 
-State **probabilities** are a soft (softmax) function of the distance from each
-regime's center (78 / 50 / 22), so they vary smoothly and sum to one. The empirical
-**transition matrix** is estimated by counting day-to-day regime transitions.
+- Parameters (start probabilities `π`, transition matrix `A`, per-state Gaussian means
+  and diagonal covariances) are estimated by **Baum-Welch** (EM) with log-space
+  forward-backward for numerical stability.
+- The most likely state path is decoded with **Viterbi**; the current state's
+  **posterior probabilities** come from the forward-backward smoother.
+- States are labelled post-hoc by a risk score on their means
+  (`mean(mom) − mean(ρ̄) − mean(vol) − mean(dxy)`): highest → Risk-On, lowest → Risk-Off.
+- The **transition matrix** shown in the dashboard is the HMM's estimated `A`.
+
+If the HMM fails to fit (degenerate data), the engine falls back to a transparent
+threshold on the index (≥60 Risk-On, 40–60 Neutral, <40 Risk-Off) so the pipeline never
+breaks. The `model` field in `data.json` records which path was used (`hmm` / `threshold`).
+
+The **index** and the **regime** are deliberately separate: the index is a continuous
+percentile gauge of liquidity/risk appetite, the regime is the HMM's discrete state.
+They usually agree, but can diverge (e.g. a low gauge while volatility is not yet in the
+rare crash state) — which is informative, not a bug.
 
 ## 5. Per-asset beta
 
@@ -74,9 +99,8 @@ betas; gold and the dollar are the smallest or negative.
 
 - The index is a **percentile rank within its own window**, so it is relative, not
   absolute, and re-bases as the window rolls.
-- The regime is threshold-based, not a fitted hidden-Markov model; probabilities are a
-  heuristic, not posterior state probabilities.
+- The HMM uses **diagonal** covariances and a small fixed number of states; correlation
+  is still a rolling-window estimate rather than a full **DCC-GARCH** dynamic
+  correlation. That dynamic-correlation upgrade is the main remaining model improvement.
+- ~1 year of daily history is a short sample for estimating regime transitions.
 - Correlation is not causation; past behavior does not guarantee future results.
-
-Upgrading §3–4 to a proper DCC-GARCH + Baum-Welch/Viterbi estimator is the main planned
-methodology improvement.
